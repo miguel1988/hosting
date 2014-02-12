@@ -55,7 +55,31 @@ cursor.execute(otorgar_privilegios)
 recargar_bd = "flush privileges;"
 conexion_bd.commit()
 
-# Creamos las carpetas para el nuevo usuario:
+# Creamos el directorio del nuevo usuario:
 os.system("mkdir /srv/www/%s" %nombre_usuario)
-os.system("cp /var/www/index.html /srv/www/%s" %nombre_usuario/index.html)
-os.system("echo "<h1>dominio %s se encuentra en construccion<h1>" > /srv/www/%s/index.html"" %(nombre_dominio,nombre_usuario))
+os.system("cp index.html /srv/www/%s" %nombre_usuario/index.html)
+
+
+# Editamos el fichero del virtualhost para el nuevo usuario:
+vh=open("p_virtualhost","r")
+texto_vh=vh.read()
+vh.close()
+texto_vh=texto_vh.replace("@serv_ad@","@%s.org"% nombre_dominio)
+texto_vh=texto_vh.replace("@serv_na@","www.%s.org" % nombre_dominio)
+texto_vh=texto_vh.replace("@doc_root@","%s"% nombre_dominio)
+vh=open("/etc/apache2/sites-available/%s" % nombre_dominio,"w")
+vh.write(texto_vh)
+vh.close()
+
+
+pma=open("p_myphpadmin","r")
+texto_pma=pma.read()
+pma.close()
+texto_pma=texto_pma.replace"@serv_ad@","@%s.org" % nombre_dominio)
+texto_pma=texto_pma.replace("@serv_na@","%s"% nombre_dominio)
+pma=open("/etc/apache2/sites-available/phpmyadmin%s" % nombre_dominio,"w")
+pma.write(texto_pma)
+pma.close()
+os.system("a2ensite phpmyadmin%s >/dev/null" % nombre_dominio)
+os.system("a2ensite %s >/dev/null" % nombre_dominio)
+os.system("service apache2 restart >/dev/null ")
