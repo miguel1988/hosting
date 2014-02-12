@@ -4,13 +4,20 @@
 import os
 import sys
 import MySQLdb
+import string
+
+# Parametros variables de conexión base datos:
+maquina = 'localhost'
+usuario = 'root'
+clave = 'root'
+based_datos = 'ftpd'
 
 # Recepción de argumentos (nombre usuario y dominio):
 nombre_usuario =(sys.argv[1])
 nombre_dominio =(sys.argv[2])
 
-# Conexión base de datos
-conexion_bd = MySQLdb.connect(host="localhost", user="root", passwd="root", db="ftpd")
+# Conexión a con la base de datos de MySQL:
+conexion_bd = MySQLdb.connect(host=maquina, user=usuario, passwd=clave, db=base_datos)
 # Consulta existencia de usuario:
 cursor = conexion_bd.cursor()
 select_username = "select username from usuarios where username='%s';" %nombre_usuario
@@ -30,3 +37,18 @@ if resp_dominio != None:
 	#exit()
 else:
 	print "El dominio introducido no esta registrado puede registrarlo como %s" %nombre_dominio
+
+# Generamos una contraseña para el nuevo usuario:
+from random import choice
+def GenPasswd(n):
+    return ''.join([choice(string.letters + string.digits) for i in range(n)])
+contrasenia_bd = GenPasswd(8)
+print "%s tu contraseña es %s" % (nombre_usuario, contrasenia_bd)
+
+# Creamos la base de datos para el nuevo usuario:
+crea_tabla = "create database %s" %nombre_usuario
+cursor.execute(crea_tabla)
+otorgar_privilegios = "grant all privileges on %s.* to "% (nombre_usuario)+ " %s@localhost"% (nombre_usuario)+ " identified by "+"'%s'" % (contrasenia_bd)+";"
+cursor.execute(otorgar_privilegios)
+recargar_bd = "flush privileges;"
+conexion_bd.commit()
