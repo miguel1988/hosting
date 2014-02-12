@@ -1,26 +1,26 @@
 <VirtualHost *:80>
-        ServerAdmin admin.@correo@
-	Servername @pagina@
-        DocumentRoot /srv/www/@dominio@
+        ServerAdmin admin@serv_ad@
+	Servername @serv_na@
+        DocumentRoot /srv/www/@doc_root@
         <Directory />
                 Options FollowSymLinks
                 AllowOverride None
         </Directory>
-        <Directory /srv/www/@dominio@>
+        <Directory /srv/www/@doc_root@>
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride None
                 Order allow,deny
                 allow from all
         </Directory>
         DavLockDB /tmp/DavLock
-        <Directory /var/www/webdav>
+        <Directory /srv/www/webdav>
             dav on
             Options Indexes FollowSymLinks MultiViews
             AllowOverride None
             Order allow,deny
             allow from all
             AuthType digest
-            AuthUserFile "/var/www/digest.txt"
+            AuthUserFile "/srv/www/digest.txt"
             AuthName "Dominio"
             Require valid-user
         </Directory>
