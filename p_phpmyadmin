@@ -2,7 +2,7 @@
         ServerAdmin @serv_ad@
         ServerName mysql.@serv_na@
         DocumentRoot /usr/share/phpmyadmin
-        <Directory /usrshare/phpmyadmin>
+        <Directory /usr/share/phpmyadmin>
                 Options FollowSymLinks
                 AllowOverride None
         </Directory>

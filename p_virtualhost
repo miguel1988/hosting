@@ -12,18 +12,6 @@
                 Order allow,deny
                 allow from all
         </Directory>
-        DavLockDB /tmp/DavLock
-        <Directory /srv/www/webdav>
-            dav on
-            Options Indexes FollowSymLinks MultiViews
-            AllowOverride None
-            Order allow,deny
-            allow from all
-            AuthType digest
-            AuthUserFile "/srv/www/digest.txt"
-            AuthName "Dominio"
-            Require valid-user
-        </Directory>
 
         ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
         <Directory "/usr/lib/cgi-bin">
@@ -41,8 +29,5 @@
 
         CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
-
-
-
 
 

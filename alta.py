@@ -31,7 +31,7 @@ cursor.execute(select_username)
 resp_username = cursor.fetchone()
 if resp_username != None:
 	print "El nombre de usuario %s ya existe, por favor pruebe con otro" %nombre_usuario
-	#exit()
+	exit()
 else:
 	print "El usuario introducido no esta registrado puede regisrarse como %s" %nombre_usuario
 	
@@ -42,7 +42,7 @@ cursor.execute(select_dominio)
 resp_dominio = cursor.fetchone()
 if resp_dominio != None:
 	print "El nombre de dominio %s ya existe, por favor pruebe con otro" %nombre_dominio
-	#exit()
+	exit()
 else:
 	print "El dominio introducido no esta registrado puede registrarlo como %s" %nombre_dominio
 
@@ -77,13 +77,12 @@ otorgar_privilegios = "grant all privileges on %s.* to "% (nombre_usuario)+ " %s
 cursor.execute(otorgar_privilegios)
 recargar_bd = "flush privileges;"
 insert_usuario="insert into usuarios values ('%s', password('%s'), '%s', 6000, '/srv/www/%s','/bin/false',1,'%s');" % (nombre_usuario,contrasenia_bd,uid_nuevo,nombre_dominio,nombre_dominio)
-#insert_usuario="insert into `usuarios` values ('', "+"'"+nombre_usuario+"', password("+"'"+contrasenia_bd+"'), "+"'"+uid_nuevo+"', 6000, '/srv/www/"+nombre_dominio+"', '/sbin/nologin', 1, "+"'"+nombre_dominio+"');"
 cursor.execute(insert_usuario)
 conexion_bd.commit()
 
 
 # Añadimos al fichero /etc/bind/named.conf.local la nueva zona:
-zona_nueva = '\nzone ' +'"' +  nombre_dominio +'"'  +'{\ntype master;\nfile "db.'+ nombre_dominio +'"' +';\n}; '
+zona_nueva = '\nzone ' +'"' +  nombre_dominio +'"'  +'{\ntype master;\nfile "db.'+ nombre_dominio +'"' +';\n};\n '
 nameconflocal = open("/etc/bind/named.conf.local","a")
 nameconflocal.write(zona_nueva) 
 nameconflocal.close() 
