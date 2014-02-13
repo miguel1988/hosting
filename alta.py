@@ -33,7 +33,7 @@ if resp_username != None:
 	print "El nombre de usuario %s ya existe, por favor pruebe con otro" %nombre_usuario
 	exit()
 else:
-	print "El usuario introducido no esta registrado puede regisrarse como %s" %nombre_usuario
+	print "%s has sido registrado con exito" %nombre_usuario
 	
 
 # Consulta existencia de dominio:
@@ -44,7 +44,7 @@ if resp_dominio != None:
 	print "El nombre de dominio %s ya existe, por favor pruebe con otro" %nombre_dominio
 	exit()
 else:
-	print "El dominio introducido no esta registrado puede registrarlo como %s" %nombre_dominio
+	print "El dominio %s se ha registrado con exito" %nombre_dominio
 
 
 # Obtenemos el UID mas alto registrado en la base de datos:
@@ -110,11 +110,11 @@ vh.write(texto_vh)
 vh.close()
 
 pma=open("p_phpmyadmin","r")
-texto_pma=pma.read()
+texto_pma=pma.readlines()
 pma.close()m
 texto_pma=texto_pma.replace("@serv_ad@","@%s.org" % nombre_dominio)
 texto_pma=texto_pma.replace("@serv_na@","%s"% nombre_dominio)
-pma=open("/etc/apache2/sites-available/phpmyadmin%s" % nombre_dominio,"w")
+pma=open("/etc/apache2/sites-available/mysql.%s" % nombre_dominio,"w")
 pma.write(texto_pma)
 pma.close()
 os.system("a2ensite phpmyadmin%s >/dev/null" % nombre_dominio)
