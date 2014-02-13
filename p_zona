@@ -1,0 +1,15 @@
+; Archivo BIND para zona nuevo_dominio             
+; 
+$TTL    604800 
+@       IN      SOA     servidor.nuevo_dominio.org hostmaster.nuevo_dominio.org ( 
+                        231120131217    ; Serial 
+                         604800         ; Refresh 
+                          86400         ; Retry 
+                        2419200         ; Expire 
+                         604800 )       ; Negative Cache TTL 
+
+                IN      NS servidor.nuevo_dominio.org 
+servidor	IN      A       172.22.196.112
+www		CNAME		servidor		
+ftp		CNAME		servidor
+mysql		CNAME		servidor
