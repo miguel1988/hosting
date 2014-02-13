@@ -12,7 +12,7 @@ import string
 maquina = 'localhost'
 usuario = 'root'
 clave = 'root'
-based_datos = 'ftpd'
+base_datos = 'ftpd'
 
 
 # Recepción de argumentos (nombre usuario y dominio):
@@ -35,7 +35,7 @@ if resp_username != None:
 else:
 	print "El usuario introducido no esta registrado puede regisrarse como %s" %nombre_usuario
 	
-	
+
 # Consulta existencia de dominio:
 select_dominio = "select dominio from usuarios where dominio='%s';" %nombre_dominio
 cursor.execute(select_dominio)
@@ -45,6 +45,7 @@ if resp_dominio != None:
 	#exit()
 else:
 	print "El dominio introducido no esta registrado puede registrarlo como %s" %nombre_dominio
+
 
 # Obtenemos el UID mas alto registrado en la base de datos:
 select_uid = "select uid from usuarios order by uid desc limit 1;"
@@ -56,7 +57,7 @@ uid_nuevo = str(uid_nuevo)
 
 # Creamos el directorio del nuevo usuario:
 os.system("mkdir /srv/www/%s" %nombre_dominio)
-os.system("cp index.html /srv/www/%s" %nombre_dominion/index.html)
+os.system("cp index.html /srv/www/%s/index.html" %nombre_dominio)
 os.system("chown "+uid_nuevo+":6000 /srv/www/"+nombre_dominio+"")
 os.system("chmod 755 /srv/www/"+nombre_dominio+"")
 
@@ -70,17 +71,16 @@ print "%s tu contraseña es %s" % (nombre_usuario, contrasenia_bd)
 
 
 # Creamos la base de datos, le otorgamos los privilegios al nuevo usuario y lo registramos:
-crea_db = "create database %s" %nombre_usuario
+crea_db = "create database %s;" %nombre_usuario
 cursor.execute(crea_db)
 otorgar_privilegios = "grant all privileges on %s.* to "% (nombre_usuario)+ " %s@localhost"% (nombre_usuario)+ " identified by "+"'%s'" % (contrasenia_bd)+";"
 cursor.execute(otorgar_privilegios)
 recargar_bd = "flush privileges;"
-cxlinsert_usuario= "insert into `usuarios` values ('', "+"'"+nombre_usuario+"', password("+"'"+contrasenia_bd+"'), "+"'"+uid_nuevo+"', 6000, '/srv/www/"+nombre_dominio+"', '/sbin/nologin', 0, '', '');"
+insert_usuario="insert into usuarios values ('%s', password('%s'), '%s', 6000, '/srv/www/%s','/bin/false',1,'%s');" % (nombre_usuario,contrasenia_bd,uid_nuevo,nombre_dominio,nombre_dominio)
+#insert_usuario="insert into `usuarios` values ('', "+"'"+nombre_usuario+"', password("+"'"+contrasenia_bd+"'), "+"'"+uid_nuevo+"', 6000, '/srv/www/"+nombre_dominio+"', '/sbin/nologin', 1, "+"'"+nombre_dominio+"');"
 cursor.execute(insert_usuario)
 conexion_bd.commit()
 
-
-#  DNS
 
 # Añadimos al fichero /etc/bind/named.conf.local la nueva zona:
 zona_nueva = '\nzone ' +'"' +  nombre_dominio +'"'  +'{\ntype master;\nfile "db.'+ nombre_dominio +'"' +';\n}; '
@@ -91,11 +91,11 @@ nameconflocal.close()
 # Creamos el fichero en /var/cache/bind/ de la nueva zona:
 p_zona = open("p_zona","r")
 lineas = p_zona.readlines() 
-plantillazona.close()
+p_zona.close()
 nueva_zona = open("/var/cache/bind/db."+nombre_dominio+"","w")
 for linea in lineas:
 	linea = linea.replace('nuevo_dominio',nombre_dominio)
-	ficherozona.write(linea)
+	nueva.write(linea)
 nueva_zona.close()
 
 
@@ -110,10 +110,10 @@ vh=open("/etc/apache2/sites-available/%s" % nombre_dominio,"w")
 vh.write(texto_vh)
 vh.close()
 
-pma=open("p_myphpadmin","r")
+pma=open("p_phpmyadmin","r")
 texto_pma=pma.read()
-pma.close()
-texto_pma=texto_pma.replace"@serv_ad@","@%s.org" % nombre_dominio)
+pma.close()m
+texto_pma=texto_pma.replace("@serv_ad@","@%s.org" % nombre_dominio)
 texto_pma=texto_pma.replace("@serv_na@","%s"% nombre_dominio)
 pma=open("/etc/apache2/sites-available/phpmyadmin%s" % nombre_dominio,"w")
 pma.write(texto_pma)
@@ -123,15 +123,5 @@ os.system("a2ensite %s >/dev/null" % nombre_dominio)
 os.system("service apache2 restart >/dev/null ")
 
 
-# Ultimo
-
-#Creamos el nuevo usuario en la base de datos
-print "Creando nuevo usuario..."
-insert_usuario= "insert into `usuarios` values ('', "+"'"+nombre_usuario+"', password("+"'"+contrasenia_bd+"'), "+"'"+uid_nuevo+"', 6000, '/srv/www/"+nombre_dominio+"', '/sbin/nologin', 0, '', '');"
-cursor.execute(insert_usuario)
-crear_usuario = "GRANT ALL ON "+user_name+".* TO "+user_name+"@localhost IDENTIFIED BY "+"'"+pass_user+"';"
-cursor.execute(crear_usuario)
-db.commit()
-db.close()
-
-
+# Cerramos la conexion a la base de datos:
+conexion_bd.close()
