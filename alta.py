@@ -110,14 +110,13 @@ vh.write(texto_vh)
 vh.close()
 
 pma=open("p_phpmyadmin","r")
-texto_pma=pma.readlines()
-pma.close()m
-texto_pma=texto_pma.replace("@serv_ad@","@%s.org" % nombre_dominio)
-texto_pma=texto_pma.replace("@serv_na@","%s"% nombre_dominio)
+texto_pma=pma.read()
+pma.close()
+texto_pma=texto_pma.replace("@serv_na@","mysql.%s.org"% nombre_dominio)
 pma=open("/etc/apache2/sites-available/mysql.%s" % nombre_dominio,"w")
 pma.write(texto_pma)
 pma.close()
-os.system("a2ensite phpmyadmin%s >/dev/null" % nombre_dominio)
+os.system("a2ensite mysql.%s >/dev/null" % nombre_dominio)
 os.system("a2ensite %s >/dev/null" % nombre_dominio)
 os.system("service apache2 restart >/dev/null ")
 

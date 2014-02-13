@@ -1,5 +1,4 @@
 <VirtualHost *:80>
-        ServerAdmin admin@serv_ad@
 	Servername @serv_na@
         DocumentRoot /srv/www/@doc_root@
         <Directory />
