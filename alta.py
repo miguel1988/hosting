@@ -94,7 +94,7 @@ p_zona.close()
 nueva_zona = open("/var/cache/bind/db."+nombre_dominio+"","w")
 for linea in lineas:
 	linea = linea.replace('nuevo_dominio',nombre_dominio)
-	nueva.write(linea)
+	nueva_zona.write(linea)
 nueva_zona.close()
 
 
