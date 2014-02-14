@@ -18,7 +18,7 @@ base_datos = 'ftpd'
 # Recepción de argumentos (nombre usuario y dominio):
 nombre_usuario =(sys.argv[1])
 nombre_dominio =(sys.argv[2])
-
+nombre_usuariomy= 'my'+nombre_usuario
 
 # Conexión a con la base de datos de MySQL:
 conexion_bd = MySQLdb.connect(host=maquina, user=usuario, passwd=clave, db=base_datos)
@@ -66,19 +66,27 @@ os.system("chmod 755 /srv/www/"+nombre_dominio+"")
 from random import choice
 def GenPasswd(n):
     return ''.join([choice(string.letters + string.digits) for i in range(n)])
-contrasenia_bd = GenPasswd(8)
-print "%s tu contraseña es %s" % (nombre_usuario, contrasenia_bd)
+contrasenia_mysql = GenPasswd(8)
+#print "%s tu contraseña para acceder a phpMyAdmin es %s" % (nombre_usuario, contrasenia_mysql)
+
+from random import choice
+def GenPasswd(n):
+    return ''.join([choice(string.letters + string.digits) for i in range(n)])
+contrasenia_ftp = GenPasswd(8)
+#print "%s tu contraseña para acceder por FTP es %s" % (nombre_usuario, contrasenia_ftp)
 
 
 # Creamos la base de datos, le otorgamos los privilegios al nuevo usuario y lo registramos:
 crea_db = "create database %s;" %nombre_usuario
 cursor.execute(crea_db)
-otorgar_privilegios = "grant all privileges on %s.* to "% (nombre_usuario)+ " %s@localhost"% (nombre_usuario)+ " identified by "+"'%s'" % (contrasenia_bd)+";"
+otorgar_privilegios = "grant all privileges on %s.* to"% (nombre_usuario)+ " %s@localhost"% (nombre_usuariomy)+ " identified by "+"'%s'" % (contrasenia_mysql)+";"
 cursor.execute(otorgar_privilegios)
 recargar_bd = "flush privileges;"
-insert_usuario="insert into usuarios values ('%s', password('%s'), '%s', 6000, '/srv/www/%s','/bin/false',1,'%s');" % (nombre_usuario,contrasenia_bd,uid_nuevo,nombre_dominio,nombre_dominio)
+insert_usuario="insert into usuarios values ('%s', password('%s'), '%s', 6000, '/srv/www/%s','/bin/false',1,'%s');" % (nombre_usuario,contrasenia_ftp,uid_nuevo,nombre_dominio,nombre_dominio)
 cursor.execute(insert_usuario)
 conexion_bd.commit()
+print "Tu nombre de usuario para acceder por FTP es: %s y la contraseña %s" % (nombre_usuario, contrasenia_ftp)
+print "Tu nombre de usuario para acceder a phpMyAdmin es: my%s y la contraseña %s" % (nombre_usuario, contrasenia_mysql)
 
 
 # Añadimos al fichero /etc/bind/named.conf.local la nueva zona:
@@ -123,3 +131,4 @@ os.system("service apache2 restart >/dev/null ")
 
 # Cerramos la conexion a la base de datos:
 conexion_bd.close()
+

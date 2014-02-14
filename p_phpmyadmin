@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-        ServerName mysql.@serv_na@
+        ServerName @serv_na@
         DocumentRoot /usr/share/phpmyadmin
         <Directory /usr/share/phpmyadmin>
                 Options FollowSymLinks
