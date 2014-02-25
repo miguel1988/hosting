@@ -24,14 +24,15 @@ cursor = conexion_bd.cursor()
 select_usuario = "select username from usuarios where dominio='%s';" %nombre_dominio
 cursor.execute(select_usuario)
 resp_usuario = cursor.fetchone()
-resp_usuario2 = str(resp_usuario)
-nombre_my = 'my'+resp_usuario2
-respuesta_usuario = resp_usuario[0]
 if resp_usuario == None:
         print "El dominio introducido no existe, por favor vuelva a intentarlo"
         exit()
 else:
         print "Se procederá a borrar la cuenta perteneciente al dominio%s" %nombre_dominio
+
+	resp_usuario2 = str(resp_usuario)
+	nombre_my = 'my'+resp_usuario2
+	respuesta_usuario = resp_usuario[0]
 
 
         # Borramos los sitios en Apache del usuario y reiniciamos el servicio:

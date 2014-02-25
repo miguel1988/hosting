@@ -34,16 +34,17 @@ else:
     resp2=str(resp_dominio)
     resp3=resp2[2:-3]    
 
-    linea=linea.replace("@serv_na@","%s.%s.org" % (nombre_subdominio,nombre_usuario))
+    linea=linea.replace("@serv_na@","%s.%s" % (nombre_subdominio,resp3))
     linea=linea.replace("@doc_root@","%s/subdominio/%s"% (resp3,nombre_subdominio))
-    subdo=open("/etc/apache2/sites-available/%s" % resp3,"w")
+    subdo=open("/etc/apache2/sites-available/subdominio.%s" % resp3,"w")
     subdo.write(linea)
     subdo.close()
 
-    os.system("a2ensite %s" % resp3)
+    os.system("a2ensite subdominio.%s" % resp3)
     os.system("service apache2 restart >/dev/null ")
 
     directa = open("/var/cache/bind/db.%s" % resp3,"a")
     directa.write("%s  CNAME servidor\n" % nombre_subdominio)
     directa.close()
-    os.system("service bind9 restart >/dev/null ")
+    os.system("service bind9 restart >/dev/null ") 
+    os.system("chmod -R 777 /srv/www/%s/" % (resp3)

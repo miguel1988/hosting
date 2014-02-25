@@ -2,9 +2,8 @@
 
 
 # Importamos las librerías necesarias:
-import sys
 import MySQLdb
-
+import sys
 
 # Parametros variables de conexión base datos:
 maquina = 'localhost'

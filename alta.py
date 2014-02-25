@@ -89,6 +89,7 @@ print "Tu nombre de usuario para acceder por FTP es: %s y la contraseña %s" % (
 print "Tu nombre de usuario para acceder a phpMyAdmin es: my%s y la contraseña %s" % (nombre_usuario, contrasenia_mysql)
 
 
+
 # Añadimos al fichero /etc/bind/named.conf.local la nueva zona:
 zona_nueva = '\nzone ' +'"' +  nombre_dominio +'"'  +'{\ntype master;\nfile "db.'+ nombre_dominio +'"' +';\n};\n '
 nameconflocal = open("/etc/bind/named.conf.local","a")
@@ -104,14 +105,15 @@ for linea in lineas:
 	linea = linea.replace('nuevo_dominio',nombre_dominio)
 	nueva_zona.write(linea)
 nueva_zona.close()
+os.system("service bind9 restart >/dev/null ")
 
 
 # Editamos el fichero del virtualhost para el nuevo usuario:
 vh=open("p_virtualhost","r")
 texto_vh=vh.read()
 vh.close()
-texto_vh=texto_vh.replace("@serv_ad@","@%s.org"% nombre_dominio)
-texto_vh=texto_vh.replace("@serv_na@","www.%s.org" % nombre_dominio)
+texto_vh=texto_vh.replace("@serv_ad@","@%s"% nombre_dominio)
+texto_vh=texto_vh.replace("@serv_na@","www.%s" % nombre_dominio)
 texto_vh=texto_vh.replace("@doc_root@","%s"% nombre_dominio)
 vh=open("/etc/apache2/sites-available/%s" % nombre_dominio,"w")
 vh.write(texto_vh)
@@ -120,7 +122,7 @@ vh.close()
 pma=open("p_phpmyadmin","r")
 texto_pma=pma.read()
 pma.close()
-texto_pma=texto_pma.replace("@serv_na@","mysql.%s.org"% nombre_dominio)
+texto_pma=texto_pma.replace("@serv_na@","mysql.%s"% nombre_dominio)
 pma=open("/etc/apache2/sites-available/mysql.%s" % nombre_dominio,"w")
 pma.write(texto_pma)
 pma.close()
